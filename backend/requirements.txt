@@ -1,0 +1,12 @@
+torch
+langchain==0.1.5
+sentence-transformers
+docx2txt
+faiss-cpu
+transformers
+sentencepiece
+accelerate
+fastapi
+uvicorn
+pydantic
+sse-starlette
