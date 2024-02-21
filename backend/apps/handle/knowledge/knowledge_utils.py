@@ -78,3 +78,6 @@ def add_knowledge(path, kg_name, split_strategy={'mode': 'auto'}):
     faiss_index.save_local('knowledge_base/vector_db/{}_index'.format(kg_name))
     return {'code': 1, 'message': '处理成功'}
 
+
+def load_knowledge(kg_name):
+    return FAISS.load_local("knowledge_base/vector_db/{}_index".format(kg_name), embeddings)
