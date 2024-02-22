@@ -58,17 +58,6 @@ def model_message(query, history=[], is_stream=False):
         yield result['content'], history
 
 
-def generate_advice(diagnostic, db, option='life'):
-    retriever = Search(db, 2)
-    content = []
-    for d in diagnostic:
-        content += retriever.search_for_content(d)
-    content = '\n\n'.join(content)
-    diagnostic = '\n'.join(diagnostic)
-    response, _ = next(model_message(advice[option].format(diagnostic=diagnostic, content=content)))
-    return response
-
-
 def chat(query, db=None, is_stream=False):
     if db:
         retriever = Search(db, 5)
