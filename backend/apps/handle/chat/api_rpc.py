@@ -1,6 +1,6 @@
 from ...config.model_config import model_config, chat_config
 from ...handle.retrieval.retrieval_utils import Search
-from .prompt import naive_rag
+from .prompt import advice, naive_rag
 import requests
 import json
 
@@ -8,13 +8,7 @@ import json
 model_name = model_config.base_model
 
 
-def model_message(query, history=[], is_stream=False):
-    history.append(
-        {
-            'role': 'user',
-            'content': query
-        }
-    )
+def post(history, is_stream=False):
     data = {
         'model': model_name,
         'messages': history,
@@ -31,11 +25,23 @@ def model_message(query, history=[], is_stream=False):
         )
     else:
         response = requests.post(
-            'http://{ip}:{port}/v1/chat'.format(ip=chat_config['local'][model_name]['ip'], port=str(chat_config['local'][model_name]['port'])),
+            'http://{ip}:{port}/v1/chat'.format(ip=chat_config['local'][model_name]['ip'],
+                                                port=str(chat_config['local'][model_name]['port'])),
             data=json_data,
             timeout=60,
             stream=is_stream
         )
+    return response
+
+
+def model_message(query, history=[], is_stream=False):
+    history.append(
+        {
+            'role': 'user',
+            'content': query
+        }
+    )
+    response = post(history, is_stream=is_stream)
     if is_stream:
         history.append({'role': 'assistant', 'content': ''})
         for line in response.iter_lines(decode_unicode=True):
@@ -50,6 +56,17 @@ def model_message(query, history=[], is_stream=False):
         result = response.json()['choices'][0]['message']
         history.append(result)
         yield result['content'], history
+
+
+def generate_advice(diagnostic, db, option='life'):
+    retriever = Search(db, 2)
+    content = []
+    for d in diagnostic:
+        content += retriever.search_for_content(d)
+    content = '\n\n'.join(content)
+    diagnostic = '\n'.join(diagnostic)
+    response, _ = next(model_message(advice[option].format(diagnostic=diagnostic, content=content)))
+    return response
 
 
 def chat(query, db=None, is_stream=False):
