@@ -45,7 +45,7 @@ print('+------------------------------------------------+\n'
       '+------------------------------------------------+')
 
 
-@app.post("/v1/chat")
+@app.post("/v1/chat/completions")
 async def chat(item: ChatModel):
     model_name = item.model
     messages = item.messages
