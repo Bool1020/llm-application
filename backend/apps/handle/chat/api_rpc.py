@@ -1,6 +1,6 @@
 from ...config.model_config import model_config, chat_config
 from ...handle.retrieval.retrieval_utils import Search
-from .prompt import advice, naive_rag
+from .prompt import naive_rag
 import requests
 import json
 
@@ -25,8 +25,7 @@ def post(history, is_stream=False):
         )
     else:
         response = requests.post(
-            'http://{ip}:{port}/v1/chat'.format(ip=chat_config['local'][model_name]['ip'],
-                                                port=str(chat_config['local'][model_name]['port'])),
+            'http://{ip}:{port}/v1/chat/completions'.format(ip=chat_config['local'][model_name]['ip'], port=str(chat_config['local'][model_name]['port'])),
             data=json_data,
             timeout=60,
             stream=is_stream
@@ -50,6 +49,8 @@ def model_message(query, history=[], is_stream=False):
                     break
                 else:
                     result = json.loads(line.replace('data: ', ''))['choices'][0]['delta']
+                    if not result.get('content'):
+                        continue
                     history[-1]['content'] += result['content']
                     yield result['content'], history
     else:
