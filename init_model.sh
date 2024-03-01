@@ -1,0 +1,1 @@
+python -m vllm.entrypoints.openai.api_server --host 0.0.0.0 --port 5001 --model pretrained_models/Baichuan2-13B-Chat --served-model-name Baichuan2-13B-Chat --trust-remote-code
