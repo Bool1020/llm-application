@@ -1,4 +1,4 @@
-torch
+langchain-community==0.0.18
 langchain==0.1.5
 sentence-transformers
 docx2txt
