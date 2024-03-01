@@ -28,6 +28,10 @@ cd backend
 ```
 pip install -r requirements.txt
 ```
+如果你是在linux操作系统下，你可以安装vllm
+```
+pip install vllm
+```
 ### Step 3
 如果此时你还没有初始化过向量数据库，将文件放入**backend/knowledge_base/content/{知识库名称}**中，然后执行以下代码
 ```
@@ -37,6 +41,11 @@ python init_faiss.py
 如果你要使用本地模型，则在修改config.py文件后，执行以下代码
 ```
 python init_model.py
+```
+如果你是在linux操作系统下，你可以使用vllm启动大模型
+```
+cd ~
+./init_model.sh
 ```
 ### Step 5
 修改main.py并运行
